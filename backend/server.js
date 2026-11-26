@@ -13,7 +13,7 @@ app.use(express.json());
 // Rate limit login
 app.use('/api/auth/login', rateLimit({ windowMs: 15 * 60 * 1000, max: 20 }));
 
-// Routes (Kita akan buat file ini setelah server menyala)
+// Routes
 app.use('/api/auth', require('./src/routes/authRoutes'));
 app.use('/api/reimbursements', require('./src/routes/reimbursementRoutes'));
 app.use('/api/reimbursements', require('./src/routes/verificationRoutes'));
@@ -32,8 +32,5 @@ app.use((err, _req, res, _next) => {
   console.error(err);
   res.status(err.status || 500).json({ message: err.message || 'Server error' });
 });
-
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Reimburze API on :${PORT}`));
 
 module.exports = app;
