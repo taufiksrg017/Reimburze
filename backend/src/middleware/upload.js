@@ -2,8 +2,19 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const uploadDir = path.resolve(process.env.UPLOAD_DIR || './uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+const isVercel = process.env.VERCEL || process.env.NOW_BUILDER;
+
+const uploadDir = isVercel 
+  ? '/tmp/uploads' 
+  : path.resolve(process.env.UPLOAD_DIR || './uploads');
+
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (error) {
+  console.error("Gagal membuat folder upload:", error.message);
+}
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, uploadDir),

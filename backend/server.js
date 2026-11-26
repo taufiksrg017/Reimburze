@@ -25,7 +25,8 @@ app.use('/api/users', require('./src/routes/userRoutes'));
 const { auth } = require('./src/middleware/auth');
 app.get('/uploads/:file', auth, (req, res) => {
   const file = path.basename(req.params.file);
-  res.sendFile(path.resolve(process.env.UPLOAD_DIR || './uploads', file));
+  const uploadDir = process.env.VERCEL ? '/tmp/uploads' : path.resolve(process.env.UPLOAD_DIR || './uploads');
+  res.sendFile(path.join(uploadDir, file));
 });
 
 app.use((err, _req, res, _next) => {
