@@ -22,14 +22,6 @@ app.use('/api/dashboard', require('./src/routes/dashboardRoutes'));
 app.use('/api/cash', require('./src/routes/cashRoutes'));
 app.use('/api/users', require('./src/routes/userRoutes'));
 
-// File nota: dilindungi auth (bukan static public)
-const { auth } = require('./src/middleware/auth');
-app.get('/uploads/:file', auth, (req, res) => {
-  const file = path.basename(req.params.file);
-  const uploadDir = process.env.VERCEL ? '/tmp/uploads' : path.resolve(process.env.UPLOAD_DIR || './uploads');
-  res.sendFile(path.join(uploadDir, file));
-});
-
 app.use((err, _req, res, _next) => {
   console.error(err);
   res.status(err.status || 500).json({ message: err.message || 'Server error' });

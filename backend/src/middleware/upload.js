@@ -1,26 +1,20 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 
-const isVercel = process.env.VERCEL || process.env.NOW_BUILDER;
+// Konfigurasi Cloudinary (nanti masukin ke Environment Variables Vercel)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-const uploadDir = isVercel 
-  ? '/tmp/uploads' 
-  : path.resolve(process.env.UPLOAD_DIR || './uploads');
-
-try {
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
-} catch (error) {
-  console.error("Gagal membuat folder upload:", error.message);
-}
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'reimburze_nota', // Nama folder di Cloudinary
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'pdf'],
+    resource_type: 'auto',
   },
 });
 
