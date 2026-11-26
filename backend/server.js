@@ -34,4 +34,12 @@ app.use((err, _req, res, _next) => {
   res.status(err.status || 500).json({ message: err.message || 'Server error' });
 });
 
+// === TAMBAHAN BUAT JALAN DI LOKAL ===
+// Kalau lu jalanin di laptop (bukan di Vercel), nyalain servernya di port 4000
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => console.log(`Reimburze API on :${PORT}`));
+}
+
+// === BUAT VERCEL ===
 module.exports = app;
