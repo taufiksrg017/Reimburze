@@ -9,9 +9,16 @@ export default function SecureFile({ file }) {
   useEffect(() => {
     let isMounted = true;
 
+    // 1. KALAU LINK CLOUDINARY (diawali http), LANGSUNG PAKAI!
+    if (file.file_path.startsWith('http')) {
+      setBlobUrl(file.file_path);
+      return;
+    }
+
+    // 2. KALAU LINK LAMA (/uploads/...), BARU PAKAI AXIOS
     api.get(file.file_path, {
       responseType: 'blob',
-      baseURL: '',
+      baseURL: '', // Sesuaikan kalau backend lu beda domain
     })
       .then(res => {
         if (isMounted) {
@@ -23,7 +30,10 @@ export default function SecureFile({ file }) {
 
     return () => {
       isMounted = false;
-      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      // Cuma revoke kalau itu blob URL, jangan revoke link Cloudinary
+      if (blobUrl && !blobUrl.startsWith('http')) {
+        URL.revokeObjectURL(blobUrl);
+      }
     };
   }, [file.file_path]);
 
