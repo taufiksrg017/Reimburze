@@ -31,7 +31,7 @@ async function create(req, res) {
         `INSERT INTO reimbursement_receipts
            (reimbursement_id, file_path, file_type, original_name)
          VALUES (?, ?, ?, ?)`,
-        [id, `/uploads/${f.filename}`, f.mimetype, f.originalname]
+        [id, f.path, f.mimetype, f.originalname]
       );
     }
     await conn.commit();
@@ -111,7 +111,7 @@ async function update(req, res) {
     for (const f of files) {
       await conn.query(
         `INSERT INTO reimbursement_receipts (reimbursement_id, file_path, file_type, original_name) VALUES (?, ?, ?, ?)`,
-        [id, `/uploads/${f.filename}`, f.mimetype, f.originalname]
+        [id, f.path, f.mimetype, f.originalname]
       );
     }
 
